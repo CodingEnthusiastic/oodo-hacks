@@ -101,12 +101,12 @@ const receiptSlice = createSlice({
       })
       .addCase(fetchReceipts.fulfilled, (state, action) => {
         state.isLoading = false
-        state.items = action.payload.receipts || []
+        state.items = action.payload.data || []
         state.pagination = {
-          page: action.payload.page || 1,
-          limit: action.payload.limit || 20,
-          totalItems: action.payload.totalItems || 0,
-          totalPages: action.payload.totalPages || 0
+          page: action.payload.pagination?.current || 1,
+          limit: 20,
+          totalItems: action.payload.pagination?.totalItems || 0,
+          totalPages: action.payload.pagination?.total || 0
         }
       })
       .addCase(fetchReceipts.rejected, (state, action) => {
@@ -115,7 +115,7 @@ const receiptSlice = createSlice({
       })
       
       .addCase(fetchReceipt.fulfilled, (state, action) => {
-        state.currentReceipt = action.payload.receipt
+        state.currentReceipt = action.payload.data
       })
       
       .addCase(createReceipt.pending, (state) => {
@@ -124,7 +124,7 @@ const receiptSlice = createSlice({
       })
       .addCase(createReceipt.fulfilled, (state, action) => {
         state.isCreating = false
-        state.items.unshift(action.payload.receipt)
+        state.items.unshift(action.payload.data)
       })
       .addCase(createReceipt.rejected, (state, action) => {
         state.isCreating = false
@@ -137,11 +137,11 @@ const receiptSlice = createSlice({
       })
       .addCase(updateReceipt.fulfilled, (state, action) => {
         state.isUpdating = false
-        const index = state.items.findIndex(item => item._id === action.payload.receipt._id)
+        const index = state.items.findIndex(item => item._id === action.payload.data._id)
         if (index !== -1) {
-          state.items[index] = action.payload.receipt
+          state.items[index] = action.payload.data
         }
-        state.currentReceipt = action.payload.receipt
+        state.currentReceipt = action.payload.data
       })
       .addCase(updateReceipt.rejected, (state, action) => {
         state.isUpdating = false

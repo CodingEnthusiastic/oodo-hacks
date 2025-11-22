@@ -34,11 +34,8 @@ const WarehouseForm = () => {
     if (isEditing && currentWarehouse) {
       reset({
         name: currentWarehouse.name,
-        code: currentWarehouse.code,
+        shortCode: currentWarehouse.shortCode,
         address: currentWarehouse.address,
-        manager: currentWarehouse.manager,
-        phone: currentWarehouse.phone,
-        email: currentWarehouse.email,
         isActive: currentWarehouse.isActive
       })
     }
@@ -53,7 +50,7 @@ const WarehouseForm = () => {
         await dispatch(createWarehouse(data)).unwrap()
         toast.success('Warehouse created successfully')
       }
-      navigate('/settings/warehouses')
+      navigate('/dashboard')
     } catch (error) {
       toast.error(error || 'Something went wrong')
     }
@@ -83,14 +80,19 @@ const WarehouseForm = () => {
             />
 
             <Input
-              label="Warehouse Code"
+              label="Short Code"
               required
-              error={errors.code?.message}
-              {...register('code', {
-                required: 'Warehouse code is required',
+              placeholder="e.g., WH1, MAIN"
+              error={errors.shortCode?.message}
+              {...register('shortCode', {
+                required: 'Short code is required',
                 pattern: {
-                  value: /^[A-Z0-9-_]+$/,
-                  message: 'Code can only contain uppercase letters, numbers, hyphens, and underscores'
+                  value: /^[A-Z0-9]+$/,
+                  message: 'Code can only contain uppercase letters and numbers'
+                },
+                maxLength: {
+                  value: 10,
+                  message: 'Code cannot exceed 10 characters'
                 }
               })}
             />
@@ -107,42 +109,16 @@ const WarehouseForm = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Input
-              label="Manager Name"
-              error={errors.manager?.message}
-              {...register('manager')}
+          <div className="flex items-center">
+            <input
+              id="isActive"
+              type="checkbox"
+              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+              {...register('isActive')}
             />
-
-            <Input
-              label="Phone"
-              error={errors.phone?.message}
-              {...register('phone')}
-            />
-
-            <Input
-              label="Email"
-              type="email"
-              error={errors.email?.message}
-              {...register('email', {
-                pattern: {
-                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                  message: 'Invalid email address'
-                }
-              })}
-            />
-
-            <div className="flex items-center">
-              <input
-                id="isActive"
-                type="checkbox"
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                {...register('isActive')}
-              />
-              <label htmlFor="isActive" className="ml-2 block text-sm text-gray-900">
-                Active Warehouse
-              </label>
-            </div>
+            <label htmlFor="isActive" className="ml-2 block text-sm text-gray-900">
+              Active Warehouse
+            </label>
           </div>
 
           <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">

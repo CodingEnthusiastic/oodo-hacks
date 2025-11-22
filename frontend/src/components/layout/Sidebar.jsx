@@ -14,6 +14,7 @@ import {
   UserIcon,
   ArrowRightOnRectangleIcon,
   XMarkIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline'
 import Button from '../common/Button'
 import toast from 'react-hot-toast'
@@ -32,6 +33,7 @@ const navigation = [
       { name: 'Move History', href: '/operations/move-history' },
     ],
   },
+  { name: 'Reports', href: '/reports', icon: ChartBarIcon },
   {
     name: 'Settings',
     icon: Cog6ToothIcon,

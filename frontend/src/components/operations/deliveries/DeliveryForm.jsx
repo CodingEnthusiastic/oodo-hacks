@@ -74,7 +74,7 @@ const DeliveryForm = () => {
         await dispatch(createDelivery(formattedData)).unwrap()
         toast.success('Delivery created successfully')
       }
-      navigate('/operations/deliveries')
+      navigate('/dashboard')
     } catch (error) {
       toast.error(error || 'Something went wrong')
     }

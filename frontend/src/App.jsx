@@ -25,6 +25,7 @@ import TransferDetail from './components/operations/transfers/TransferDetail'
 import Adjustments from './components/operations/adjustments/Adjustments'
 import AdjustmentForm from './components/operations/adjustments/AdjustmentForm'
 import MoveHistory from './components/operations/MoveHistory'
+import Reports from './components/reports/Reports'
 import Warehouses from './components/warehouses/Warehouses'
 import WarehouseForm from './components/warehouses/WarehouseForm'
 import Profile from './components/profile/Profile'
@@ -117,6 +118,9 @@ function App() {
 
                   {/* Move History */}
                   <Route path="/operations/move-history" element={<MoveHistory />} />
+
+                  {/* Reports */}
+                  <Route path="/reports" element={<Reports />} />
 
                   {/* Settings - Warehouses */}
                   <Route path="/settings/warehouses" element={<Warehouses />} />

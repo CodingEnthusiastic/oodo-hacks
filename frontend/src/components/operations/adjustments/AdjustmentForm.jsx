@@ -43,13 +43,13 @@ const AdjustmentForm = () => {
       }
 
       if (isEditing) {
-        await dispatch(updateAdjustment({ id, data: formattedData })).unwrap()
+        await dispatch(updateAdjustment({ id, data })).unwrap()
         toast.success('Adjustment updated successfully')
       } else {
-        await dispatch(createAdjustment(formattedData)).unwrap()
+        await dispatch(createAdjustment(data)).unwrap()
         toast.success('Adjustment created successfully')
       }
-      navigate('/operations/adjustments')
+      navigate('/dashboard')
     } catch (error) {
       toast.error(error || 'Something went wrong')
     }

@@ -63,7 +63,7 @@ const TransferForm = () => {
         await dispatch(createTransfer(formattedData)).unwrap()
         toast.success('Transfer created successfully')
       }
-      navigate('/operations/transfers')
+      navigate('/dashboard')
     } catch (error) {
       toast.error(error || 'Something went wrong')
     }

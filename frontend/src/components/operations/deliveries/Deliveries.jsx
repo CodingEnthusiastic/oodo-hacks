@@ -70,7 +70,7 @@ const Deliveries = () => {
             Manage outgoing stock deliveries
           </p>
         </div>
-        <Link to="/deliveries/new">
+        <Link to="/operations/deliveries/new">
           <Button icon={PlusIcon}>
             New Delivery
           </Button>

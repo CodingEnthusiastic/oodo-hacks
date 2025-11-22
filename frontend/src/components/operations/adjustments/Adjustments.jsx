@@ -70,7 +70,7 @@ const Adjustments = () => {
             Manage stock level adjustments and corrections
           </p>
         </div>
-        <Link to="/adjustments/new">
+        <Link to="/operations/adjustments/new">
           <Button icon={PlusIcon}>
             New Adjustment
           </Button>

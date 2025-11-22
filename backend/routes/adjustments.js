@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const Adjustment = require('../models/Adjustment');
 const StockMove = require('../models/StockMove');
+const Product = require('../models/Product');
 const { auth, authorize } = require('../middleware/auth');
 
 const router = express.Router();
@@ -57,8 +58,8 @@ router.get('/', auth, async (req, res) => {
 // @access  Private (Manager/Admin)
 router.post('/', auth, authorize('admin', 'manager'), [
   body('location')
-    .isMongoId()
-    .withMessage('Valid location ID is required'),
+    .notEmpty()
+    .withMessage('Location is required'),
   body('adjustmentType')
     .isIn(['physical_count', 'damage', 'loss', 'found', 'correction'])
     .withMessage('Invalid adjustment type'),
@@ -70,8 +71,8 @@ router.post('/', auth, authorize('admin', 'manager'), [
     .isArray({ min: 1 })
     .withMessage('At least one product is required'),
   body('products.*.product')
-    .isMongoId()
-    .withMessage('Valid product ID is required'),
+    .notEmpty()
+    .withMessage('Product is required'),
   body('products.*.theoreticalQuantity')
     .isFloat({ min: 0 })
     .withMessage('Theoretical quantity must be non-negative'),
@@ -89,8 +90,34 @@ router.post('/', auth, authorize('admin', 'manager'), [
       });
     }
 
+    // Convert product SKUs to ObjectIds
+    const productPromises = req.body.products.map(async (item) => {
+      let productId = item.product;
+      
+      // Check if it's a MongoDB ObjectId or SKU
+      if (!productId.match(/^[0-9a-fA-F]{24}$/)) {
+        // It's a SKU, find the product
+        const product = await Product.findOne({ sku: productId.toUpperCase() });
+        if (!product) {
+          throw new Error(`Product with SKU ${productId} not found`);
+        }
+        productId = product._id;
+      }
+      
+      return {
+        product: productId,
+        theoreticalQuantity: item.theoreticalQuantity,
+        actualQuantity: item.actualQuantity,
+        reason: item.reason,
+        notes: item.notes
+      };
+    });
+
+    const products = await Promise.all(productPromises);
+
     const adjustment = await Adjustment.create({
       ...req.body,
+      products,
       createdBy: req.user.id
     });
 

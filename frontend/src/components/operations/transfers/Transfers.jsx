@@ -70,7 +70,7 @@ const Transfers = () => {
             Manage stock transfers between warehouses
           </p>
         </div>
-        <Link to="/transfers/new">
+        <Link to="/operations/transfers/new">
           <Button icon={PlusIcon}>
             New Transfer
           </Button>

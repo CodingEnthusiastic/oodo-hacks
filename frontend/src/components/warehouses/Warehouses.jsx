@@ -55,7 +55,7 @@ const Warehouses = () => {
             Manage your warehouse locations and storage facilities
           </p>
         </div>
-        <Link to="/warehouses/new">
+        <Link to="/settings/warehouses/new">
           <Button icon={PlusIcon}>
             Add Warehouse
           </Button>
@@ -125,12 +125,12 @@ const Warehouses = () => {
                 </div>
                 
                 <div className="flex space-x-2">
-                  <Link to={`/warehouses/${warehouse._id}`} className="flex-1">
+                  <Link to={`/settings/warehouses/${warehouse._id}`} className="flex-1">
                     <Button variant="outline" size="small" icon={EyeIcon} className="w-full">
                       View
                     </Button>
                   </Link>
-                  <Link to={`/warehouses/${warehouse._id}/edit`} className="flex-1">
+                  <Link to={`/settings/warehouses/${warehouse._id}/edit`} className="flex-1">
                     <Button variant="primary" size="small" icon={PencilIcon} className="w-full">
                       Edit
                     </Button>

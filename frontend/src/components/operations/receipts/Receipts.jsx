@@ -42,8 +42,9 @@ const Receipts = () => {
   const getStatusBadge = (status) => {
     const statusConfig = {
       draft: { variant: 'secondary', text: 'Draft' },
-      confirmed: { variant: 'primary', text: 'Confirmed' },
-      received: { variant: 'success', text: 'Received' },
+      waiting: { variant: 'warning', text: 'Waiting' },
+      ready: { variant: 'primary', text: 'Ready' },
+      done: { variant: 'success', text: 'Done' },
       cancelled: { variant: 'danger', text: 'Cancelled' }
     }
     
@@ -69,7 +70,7 @@ const Receipts = () => {
             Manage incoming stock receipts
           </p>
         </div>
-        <Link to="/receipts/new">
+        <Link to="/operations/receipts/new">
           <Button icon={PlusIcon}>
             New Receipt
           </Button>
@@ -96,8 +97,9 @@ const Receipts = () => {
             >
               <option value="">All Status</option>
               <option value="draft">Draft</option>
-              <option value="confirmed">Confirmed</option>
-              <option value="received">Received</option>
+              <option value="waiting">Waiting</option>
+              <option value="ready">Ready</option>
+              <option value="done">Done</option>
               <option value="cancelled">Cancelled</option>
             </Select>
             <div className="flex items-center space-x-2">
@@ -143,7 +145,7 @@ const Receipts = () => {
                 receipts.map((receipt) => (
                   <tr key={receipt._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {receipt.receiptNumber}
+                      {receipt.reference}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {receipt.supplier?.name || 'N/A'}
@@ -155,14 +157,14 @@ const Receipts = () => {
                       {getStatusBadge(receipt.status)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(receipt.expectedDate).toLocaleDateString()}
+                      {new Date(receipt.scheduledDate).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       ${receipt.totalValue?.toFixed(2) || '0.00'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link
-                        to={`/receipts/${receipt._id}`}
+                        to={`/operations/receipts/${receipt._id}`}
                         className="text-primary-600 hover:text-primary-900"
                       >
                         View
@@ -181,7 +183,7 @@ const Receipts = () => {
                         Get started by creating a new receipt.
                       </p>
                       <div className="mt-6">
-                        <Link to="/receipts/new">
+                        <Link to="/operations/receipts/new">
                           <Button icon={PlusIcon}>
                             New Receipt
                           </Button>

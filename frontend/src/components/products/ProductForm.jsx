@@ -65,7 +65,7 @@ const ProductForm = () => {
         await dispatch(createProduct(formData)).unwrap()
         toast.success('Product created successfully')
       }
-      navigate('/products')
+      navigate('/dashboard')
     } catch (error) {
       toast.error(error || 'Something went wrong')
     }
