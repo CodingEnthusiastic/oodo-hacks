@@ -1,12 +1,47 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
 import Card from '../common/Card'
 import Button from '../common/Button'
 import Input from '../common/Input'
+import { updateProfile } from '../../store/slices/authSlice'
 import { UserIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline'
 
 const Profile = () => {
-  const { user } = useSelector(state => state.auth)
+  const dispatch = useDispatch()
+  const { user, isLoading } = useSelector(state => state.auth)
+  const [isEditing, setIsEditing] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isDirty }
+  } = useForm({
+    defaultValues: {
+      name: user?.name || '',
+      phone: user?.phone || ''
+    }
+  })
+
+  const onSubmit = async (data) => {
+    try {
+      await dispatch(updateProfile(data)).unwrap()
+      toast.success('Profile updated successfully!')
+      setIsEditing(false)
+    } catch (error) {
+      toast.error(error || 'Failed to update profile')
+    }
+  }
+
+  const handleCancel = () => {
+    reset({
+      name: user?.name || '',
+      phone: user?.phone || ''
+    })
+    setIsEditing(false)
+  }
 
   return (
     <div className="space-y-6">
@@ -26,39 +61,73 @@ const Profile = () => {
                 Personal Information
               </h3>
               
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Input
-                    label="First Name"
-                    defaultValue={user?.firstName || ''}
-                    icon={UserIcon}
+                    label="Full Name"
+                    disabled={!isEditing}
+                    error={errors.name?.message}
+                    {...register('name', {
+                      required: 'Name is required'
+                    })}
                   />
                   
                   <Input
-                    label="Last Name"
-                    defaultValue={user?.lastName || ''}
-                    icon={UserIcon}
+                    label="Role"
+                    disabled={true}
+                    value={user?.role || 'Staff'}
+                    readOnly
                   />
                 </div>
                 
                 <Input
                   label="Email Address"
                   type="email"
-                  defaultValue={user?.email || ''}
-                  icon={EnvelopeIcon}
-                  disabled
+                  disabled={true}
+                  value={user?.email || ''}
+                  readOnly
                 />
                 
                 <Input
                   label="Phone Number"
-                  defaultValue={user?.phone || ''}
-                  icon={PhoneIcon}
+                  type="tel"
+                  disabled={!isEditing}
+                  error={errors.phone?.message}
+                  {...register('phone', {
+                    pattern: {
+                      value: /^\+?[\d\s-()]+$/,
+                      message: 'Please enter a valid phone number'
+                    }
+                  })}
                 />
                 
-                <div className="flex justify-end">
-                  <Button type="submit">
-                    Update Profile
-                  </Button>
+                <div className="flex justify-end space-x-3 pt-6">
+                  {!isEditing ? (
+                    <Button 
+                      type="button" 
+                      onClick={() => setIsEditing(true)}
+                    >
+                      Edit Profile
+                    </Button>
+                  ) : (
+                    <>
+                      <Button 
+                        variant="outline" 
+                        type="button" 
+                        onClick={handleCancel}
+                        disabled={isLoading}
+                      >
+                        Cancel
+                      </Button>
+                      <Button 
+                        type="submit" 
+                        disabled={!isDirty || isLoading}
+                        isLoading={isLoading}
+                      >
+                        Save Changes
+                      </Button>
+                    </>
+                  )}
                 </div>
               </form>
             </div>
@@ -73,10 +142,10 @@ const Profile = () => {
                 <UserIcon className="h-10 w-10 text-primary-600" />
               </div>
               <h3 className="text-lg font-medium text-gray-900">
-                {user?.firstName} {user?.lastName}
+                {user?.name || 'User'}
               </h3>
               <p className="text-sm text-gray-500">{user?.email}</p>
-              <p className="text-sm text-gray-500 capitalize">{user?.role}</p>
+              <p className="text-sm text-gray-500 capitalize">{user?.role || 'Staff'}</p>
             </div>
           </Card>
 

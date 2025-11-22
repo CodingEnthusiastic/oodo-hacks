@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
+const { auth } = require('../middleware/auth');
 const { sendTokenResponse } = require('../utils/jwt');
 const { sendOTPEmail } = require('../utils/sendEmail');
 
@@ -264,8 +265,6 @@ router.post('/reset-password', [
 // @desc    Change password (authenticated)
 // @route   PUT /api/auth/change-password
 // @access  Private
-const { auth } = require('../middleware/auth');
-
 router.put('/change-password', auth, [
   body('currentPassword')
     .notEmpty()
@@ -346,7 +345,71 @@ router.get('/me', auth, async (req, res) => {
   }
 });
 
-// @desc    Logout user
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+router.put('/profile', auth, [
+  body('name')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Name must be between 2 and 50 characters'),
+  body('phone')
+    .optional()
+    .matches(/^\+?[\d\s-()]+$/)
+    .withMessage('Please provide a valid phone number')
+], async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const { name, phone } = req.body;
+    const userId = req.user.id;
+
+    // Find user and update
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Update fields if provided
+    if (name !== undefined) user.name = name;
+    if (phone !== undefined) user.phone = phone;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone
+      }
+    });
+
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error'
+    });
+  }
+});
+
+// @desc    Logout user / clear cookie
 // @route   POST /api/auth/logout
 // @access  Private
 router.post('/logout', auth, (req, res) => {
