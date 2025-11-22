@@ -14,10 +14,11 @@ const ProductForm = () => {
   const navigate = useNavigate()
   const { id } = useParams()
   const dispatch = useDispatch()
-  const { currentProduct, isCreating, isUpdating } = useSelector(state => state.products)
+  const { currentProduct, isCreating, isUpdating, isLoading } = useSelector(state => state.products)
   
   const isEditing = Boolean(id)
-  const isLoading = isCreating || isUpdating
+  const isFormLoading = isCreating || isUpdating
+  const isFetching = isEditing && isLoading
 
   const {
     register,
@@ -51,11 +52,17 @@ const ProductForm = () => {
 
   const onSubmit = async (data) => {
     try {
+      // Convert SKU to uppercase
+      const formData = {
+        ...data,
+        sku: data.sku?.toUpperCase() || ''
+      }
+      
       if (isEditing) {
-        await dispatch(updateProduct({ id, data })).unwrap()
+        await dispatch(updateProduct({ id, data: formData })).unwrap()
         toast.success('Product updated successfully')
       } else {
-        await dispatch(createProduct(data)).unwrap()
+        await dispatch(createProduct(formData)).unwrap()
         toast.success('Product created successfully')
       }
       navigate('/products')
@@ -76,11 +83,21 @@ const ProductForm = () => {
         </p>
       </div>
 
+      {isFetching && (
+        <Card>
+          <div className="flex items-center justify-center h-64">
+            <LoadingSpinner size="large" />
+          </div>
+        </Card>
+      )}
+
+      {!isFetching && (
       <Card>
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Product Name"
+              placeholder="Enter product name (e.g., Apple iPhone 15)"
               required
               error={errors.name?.message}
               {...register('name', {
@@ -94,6 +111,7 @@ const ProductForm = () => {
 
             <Input
               label="SKU"
+              placeholder="e.g., PROD-001 or APP-IPH-15"
               required
               error={errors.sku?.message}
               {...register('sku', {
@@ -107,12 +125,13 @@ const ProductForm = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">
               Description
             </label>
             <textarea
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
+              className="block w-full rounded-lg border border-slate-300 shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-200 sm:text-sm px-3 py-2.5 bg-white text-slate-900 transition-colors"
               rows={3}
+              placeholder="Enter product description..."
               {...register('description')}
             />
           </div>
@@ -120,6 +139,7 @@ const ProductForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               label="Category"
+              placeholder="e.g., Fruit, Electronics, Clothing"
               required
               error={errors.category?.message}
               {...register('category', {
@@ -151,6 +171,7 @@ const ProductForm = () => {
               type="number"
               step="0.01"
               min="0"
+              placeholder="0.00"
               error={errors.costPrice?.message}
               {...register('costPrice', {
                 min: {
@@ -165,6 +186,7 @@ const ProductForm = () => {
               type="number"
               step="0.01"
               min="0"
+              placeholder="0.00"
               error={errors.sellingPrice?.message}
               {...register('sellingPrice', {
                 min: {
@@ -180,6 +202,7 @@ const ProductForm = () => {
               label="Minimum Stock Level"
               type="number"
               min="0"
+              placeholder="0"
               error={errors.minStockLevel?.message}
               {...register('minStockLevel', {
                 min: {
@@ -193,6 +216,7 @@ const ProductForm = () => {
               label="Maximum Stock Level"
               type="number"
               min="1"
+              placeholder="1000"
               error={errors.maxStockLevel?.message}
               {...register('maxStockLevel', {
                 min: {
@@ -206,6 +230,7 @@ const ProductForm = () => {
               label="Reorder Point"
               type="number"
               min="0"
+              placeholder="10"
               error={errors.reorderPoint?.message}
               {...register('reorderPoint', {
                 min: {
@@ -219,21 +244,24 @@ const ProductForm = () => {
           <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
             <Button
               type="button"
-              variant="secondary"
+              variant="outline"
               onClick={() => navigate('/products')}
+              size="medium"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              isLoading={isLoading}
-              disabled={isLoading}
+              size="medium"
+              isLoading={isFormLoading}
+              disabled={isFormLoading}
             >
               {isEditing ? 'Update Product' : 'Create Product'}
             </Button>
           </div>
         </form>
       </Card>
+      )}
     </div>
   )
 }

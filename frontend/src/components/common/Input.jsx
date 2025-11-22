@@ -14,7 +14,6 @@ const Input = React.forwardRef(({
   const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
   const handleChange = (e) => {
-    console.log(`Input ${inputId} changed:`, e.target.value)
     if (onChange) {
       onChange(e)
     }
@@ -23,21 +22,22 @@ const Input = React.forwardRef(({
   return (
     <div className={className}>
       {label && (
-        <label htmlFor={inputId} className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+        <label htmlFor={inputId} className="block text-sm font-medium text-slate-700 mb-1.5">
           {label}
-          {required && <span className="text-danger-500 ml-1">*</span>}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
       <input
         ref={ref}
         id={inputId}
         className={classNames(
-          'block w-full rounded-lg border shadow-sm sm:text-sm px-3 py-2 transition-colors',
-          'bg-white dark:bg-slate-700 text-slate-900 dark:text-white',
-          'placeholder:text-slate-400 dark:placeholder:text-slate-500',
+          'block w-full rounded-lg border shadow-sm sm:text-sm px-3 py-2.5 transition-colors',
+          'bg-white text-slate-900',
+          'placeholder:text-slate-400',
+          'disabled:bg-slate-100 disabled:text-slate-500 disabled:cursor-not-allowed',
           error
-            ? 'border-red-300 dark:border-red-700 focus:border-red-500 focus:ring-red-500'
-            : 'border-slate-300 dark:border-slate-600 focus:border-primary-500 focus:ring-primary-500'
+            ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+            : 'border-slate-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200'
         )}
         onChange={handleChange}
         {...props}
