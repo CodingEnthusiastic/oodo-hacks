@@ -276,22 +276,22 @@ const LandingPage = () => {
                 return (
                   <div 
                     key={feature.title} 
-                    className="group relative rounded-3xl border border-slate-200 dark:border-white/10 bg-white dark:bg-gradient-to-br dark:from-slate-800/50 dark:to-slate-900/50 p-8 backdrop-blur-sm hover:border-primary-500/50 transition-all hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary-500/20"
+                    className="group relative rounded-3xl border border-slate-200 dark:border-slate-700/50 bg-white dark:bg-slate-800/80 p-8 shadow-lg dark:shadow-none hover:border-primary-500/50 dark:hover:border-primary-500/50 transition-all hover:scale-[1.02] hover:shadow-2xl hover:shadow-primary-500/20"
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <div className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${feature.gradient} shadow-lg`}>
                       <Icon className="h-7 w-7 text-white" />
                     </div>
-                    <div className="mt-1 inline-flex rounded-full bg-slate-100 dark:bg-white/5 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-400">
+                    <div className="mt-1 inline-flex rounded-full bg-slate-100 dark:bg-slate-700/50 px-3 py-1 text-xs font-medium text-slate-600 dark:text-slate-300">
                       {feature.badge}
                     </div>
-                    <h3 className="mt-4 text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
+                    <h3 className="mt-4 text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                       {feature.title}
                     </h3>
-                    <p className="mt-3 text-slate-600 dark:text-slate-400 leading-relaxed">
+                    <p className="mt-3 text-slate-600 dark:text-slate-300 leading-relaxed">
                       {feature.description}
                     </p>
-                    <div className="mt-6 h-1 w-full rounded-full bg-slate-200 dark:bg-slate-700/50 overflow-hidden">
+                    <div className="mt-6 h-1 w-full rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
                       <div className={`h-1 rounded-full bg-gradient-to-r ${feature.gradient} transform origin-left transition-transform duration-500 group-hover:scale-x-100 scale-x-0`} />
                     </div>
                   </div>
